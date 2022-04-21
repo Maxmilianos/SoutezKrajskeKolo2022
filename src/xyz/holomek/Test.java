@@ -1,5 +1,6 @@
 package xyz.holomek;
 
+import xyz.holomek.okresni.ulohy.pexeso.Pexeso;
 import xyz.holomek.template.gui.Number1;
 import xyz.holomek.utils.UtilFiles;
 
