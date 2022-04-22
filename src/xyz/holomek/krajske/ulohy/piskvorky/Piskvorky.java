@@ -58,7 +58,14 @@ public class Piskvorky {
             int x = rowX * sizePerFieldX, y = rowY * sizePerFieldY;
 
             JLabel fieldLabel = new JLabel();
-            fieldLabel.setFont(new Font("Serif", Font.BOLD, 64)); // idealni font pro to me prislo
+            int size = 64;
+            if (fieldsPerSide > 7)
+                size = 32;
+            else if (fieldsPerSide > 10)
+                size = 16;
+            else if (fieldsPerSide > 15)
+                size = 12;
+            fieldLabel.setFont(new Font("Serif", Font.BOLD, size)); // idealni font pro to me prislo
             fieldLabel.setBounds(x, y, sizePerFieldX, sizePerFieldY);
 
             // misto zdlouhaveho vykreslovani poli, muzeme udelat toto

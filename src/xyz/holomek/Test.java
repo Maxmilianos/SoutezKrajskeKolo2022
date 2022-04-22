@@ -2,6 +2,7 @@ package xyz.holomek;
 
 import xyz.holomek.krajske.ulohy.piskvorky.Piskvorky;
 import xyz.holomek.krajske.ulohy.piskvorky.PiskvorkySelect;
+import xyz.holomek.krajske.ulohy.scrabble.Scrabble;
 
 public class Test {
 
@@ -21,12 +22,18 @@ public class Test {
         autoRadio.start();*/
 
         /*
-        Treti uloha, splnena, mela by bt funkcni
-         */
+        Treti uloha, splnena, funkcni, splnena cela myslim
+         *//*
         PiskvorkySelect pexesoSelect = new PiskvorkySelect();
         pexesoSelect.initialize();
         /*Piskvorky test = new Piskvorky(7, "First", "Second");
         test.start();*/
+
+        /*
+        Ctvrta uloha, splnena cela
+         */
+        Scrabble scrabble = new Scrabble();
+        scrabble.start();
 
     }
 
