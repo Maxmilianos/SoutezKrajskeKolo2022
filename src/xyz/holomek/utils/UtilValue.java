@@ -7,6 +7,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 
+/*
+Author: @Maxmilianos
+ */
 public class UtilValue implements Comparator<Object> {
 	
     private Map<Object, Integer> base;
@@ -33,7 +36,7 @@ public class UtilValue implements Comparator<Object> {
             }
     	}
     }
-    
+
     public static HashMap<Integer, Object> convertToHighestLowest(HashMap<Object, Integer> defaultMap) {
     	HashMap<Object, Integer> map = new HashMap<Object, Integer>();
     	UtilValue bvc = new UtilValue(map, false);

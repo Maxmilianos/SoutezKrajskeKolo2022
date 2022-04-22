@@ -13,7 +13,7 @@ public class Piskvorky {
 
     private JFrame frame;
 
-    private int sizeX, sizeY, fieldsPerSide = 7, actualPlaying = 0;
+    private int sizeX, sizeY, fieldsPerSide = 7, actualPlaying = 0, pocetHer;
 
     private Player playerOne, playerTwo, winner;
 
@@ -22,12 +22,15 @@ public class Piskvorky {
     private ArrayList<Field> fields = new ArrayList<Field>();
 
     // pro upresneni vsech pozadavku
-    public Piskvorky(int fieldsPerSide, String playerOne, String playerTwo) {
+    public Piskvorky(int fieldsPerSide, int pocetHer, Player playerOne, Player playerTwo) {
         this.sizeX = 600;
         this.sizeY = 600;
         this.fieldsPerSide = fieldsPerSide;
-        this.playerOne = new Player(playerOne, Type.X);
-        this.playerTwo = new Player(playerTwo, Type.O);
+        this.pocetHer = pocetHer;
+        this.playerOne = playerOne;
+        this.playerOne.type = Type.X;
+        this.playerTwo = playerTwo;
+        this.playerTwo.type = Type.O;
     }
 
     // uvodni startovaci metoda
@@ -103,10 +106,20 @@ public class Piskvorky {
         playerOne.setHorizontalAlignment(JLabel.CENTER);
         frame.getContentPane().add(playerOne);
 
+        JLabel playerOneWinnings = new JLabel("Wins: " + this.playerOne.winning);
+        playerOneWinnings.setBounds(sizeX + 1, 40, 149, 30);
+        playerOneWinnings.setHorizontalAlignment(JLabel.CENTER);
+        frame.getContentPane().add(playerOneWinnings);
+
         JLabel playerTwo = new JLabel(this.playerTwo.getName());
         playerTwo.setBounds(sizeX + 1, sizeY - 50, 149, 30);
         playerTwo.setHorizontalAlignment(JLabel.CENTER);
         frame.getContentPane().add(playerTwo);
+
+        JLabel playerTwoWinnings = new JLabel("Wins: " + this.playerTwo.winning);
+        playerTwoWinnings.setBounds(sizeX + 1, sizeY - 90, 149, 30);
+        playerTwoWinnings.setHorizontalAlignment(JLabel.CENTER);
+        frame.getContentPane().add(playerTwoWinnings);
 
         this.playerOne.label = playerOne;
         this.playerTwo.label = playerTwo;
@@ -147,15 +160,32 @@ public class Piskvorky {
         if (winner != null) {
             System.out.println("Mame viteze hrace: " + winner.getName() + " typ: " + winner.type.ch);
             this.winner = winner;
+            this.winner.winning += 1;
 
-            int result = JOptionPane.showConfirmDialog(frame,
-                    "Vyhral hrac: " + winner.getName() + ". Gratulujeme.\n" +
-                            "Chcete hrat dale znovu?");
-            if (result == 0) {
-                new Piskvorky(fieldsPerSide, playerTwo.getName(), playerOne.getName()).start();
-                frame.dispose();
+            int pocetZbyvajicichHer = playerOne.winning + playerTwo.winning - pocetHer;
+
+            if (pocetZbyvajicichHer == 0) {
+                Player gameWinner = playerOne.winning > playerTwo.winning ? playerOne : (playerOne.winning < playerTwo.winning ? playerTwo : null);
+                int result = 0;
+                if (gameWinner == null)
+                    result = JOptionPane.showConfirmDialog(frame,
+                            "Gratuluji! Remízovali jste na plné čáře!\nChcete hrát další sérii her?"
+                        );
+                else
+                    result = JOptionPane.showConfirmDialog(frame,
+                            "Gratuluji! Celou hru vyhrál hráč " + winner.getName() + "!\nChcete hrát další sérii her?"
+                    );
+                if (result == 0) {
+                    playerOne.winning = 0;
+                    playerTwo.winning = 0;
+                    new Piskvorky(fieldsPerSide, pocetHer, playerTwo, playerOne).start();
+                    frame.dispose();
+                } else {
+                    System.exit(0);
+                }
             } else {
-                System.exit(0);
+                new Piskvorky(fieldsPerSide, pocetHer, playerTwo, playerOne).start();
+                frame.dispose();
             }
         }
     }
@@ -173,8 +203,8 @@ public class Piskvorky {
 
         //horizontal
         if (horizontal) {
-            for (int y = 1; y <= fieldsPerSide; y++) {
-                for (int x = 1; x <= fieldsPerSide; x++) {
+            for (int y = 0; y < fieldsPerSide; y++) {
+                for (int x = 0; x < fieldsPerSide; x++) {
                     Field f = getField(x, y);
                     if (f != null) {
                         if (f.type == Type.NONE)
@@ -201,8 +231,8 @@ public class Piskvorky {
 
         //vertikalni
         if (vertical) {
-            for (int x = 1; x <= fieldsPerSide; x++) {
-                for (int y = 1; y <= fieldsPerSide; y++) {
+            for (int x = 0; x < fieldsPerSide; x++) {
+                for (int y = 0; y < fieldsPerSide; y++) {
                     Field f = getField(x, y);
                     if (f != null) {
                         if (f.type == Type.NONE)
@@ -229,8 +259,8 @@ public class Piskvorky {
 
         //a
         if (a) {
-            for (int y = 1; y <= fieldsPerSide; y++) {
-                for (int x = 1; x <= fieldsPerSide; x++) {
+            for (int y = 0; y < fieldsPerSide; y++) {
+                for (int x = 0; x < fieldsPerSide; x++) {
                     Field f = getField(x, y);
                     if (f != null) {
                         if (f.type != Type.NONE) {
@@ -256,8 +286,8 @@ public class Piskvorky {
 
         //b
         if (b) {
-            for (int y = 1; y <= fieldsPerSide; y++) {
-                for (int x = 1; x <= fieldsPerSide; x++) {
+            for (int y = 0; y < fieldsPerSide; y++) {
+                for (int x = 0; x < fieldsPerSide; x++) {
                     Field f = getField(x, y);
                     if (f != null) {
                         if (f.type != Type.NONE) {

@@ -23,7 +23,7 @@ public class Test {
 
         /*
         Treti uloha, splnena, funkcni, splnena cela myslim
-         *//*
+         */
         PiskvorkySelect pexesoSelect = new PiskvorkySelect();
         pexesoSelect.initialize();
         /*Piskvorky test = new Piskvorky(7, "First", "Second");
@@ -31,9 +31,9 @@ public class Test {
 
         /*
         Ctvrta uloha, splnena cela
-         */
+         *//*
         Scrabble scrabble = new Scrabble();
-        scrabble.start();
+        scrabble.start();*/
 
     }
 

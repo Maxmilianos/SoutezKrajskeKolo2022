@@ -49,7 +49,7 @@ public class PiskvorkySelect {
 
         JTextField fieldsText = new JTextField("7");
         fields.setLabelFor(fieldsText);
-        fieldsText.setBounds(250, 350, 100, 20);
+        fieldsText.setBounds(250, 325, 100, 20);
         fieldsText.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent event) {
@@ -62,6 +62,26 @@ public class PiskvorkySelect {
         });
         frame.getContentPane().add(fieldsText);
 
+        JLabel attack = new JLabel("Souboj? (Napiste kolik her chcete hrat)");
+        attack.setFont(new Font("Dialog", Font.BOLD, 14));
+        attack.setBounds(150, 350, 300, 20);
+        frame.getContentPane().add(attack);
+
+        JTextField attackText = new JTextField("1");
+        attack.setLabelFor(attackText);
+        attackText.setBounds(250, 375, 100, 20);
+        attackText.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent event) {
+                try {
+                    Integer.parseInt(event.getKeyChar() + "");
+                } catch (NumberFormatException e) {
+                    event.consume();
+                }
+            }
+        });
+        frame.getContentPane().add(attackText);
+
         JButton button = new JButton("Začít hru");
         button.setFont(new Font("Dialog", Font.BOLD, 18));
         button.setBounds(215, 428, 120, 35);
@@ -72,7 +92,12 @@ public class PiskvorkySelect {
                     return;
                 }
                 try {
-                    new Piskvorky(Integer.parseInt(fieldsText.getText()), playerOneText.getText(), playerTwoText.getText()).start();
+                    new Piskvorky(
+                            Integer.parseInt(fieldsText.getText()),
+                            Integer.parseInt(attackText.getText()),
+                            new Player(playerOneText.getText(), Type.X),
+                            new Player(playerTwoText.getText(), Type.O)
+                        ).start();
                     frame.dispose();
                 } catch (NumberFormatException ex) {
 
