@@ -5,27 +5,43 @@ import java.io.File;
 import java.text.Normalizer;
 import java.util.ArrayList;
 
+/*
+umět oznámit, že zadání nelze pro danou sadu souborů splnit (vymyslete proč, v takovém
+případě místo seznamu souborů k přejmenování napište, že zadání nelze splnit a proč)
+nepochopil jsem toto, nejspis to tam mam
+ */
 public class AutoRadio {
 
     // jedna se o list, ve kterem uchovavam hudbu a slozky
     public ArrayList<Music> musics = new ArrayList<>();
 
+    public File selectedFile;
+
     // zahajovaci metoda, vyuzita k startu teto ulohy
-    public void start() {
-        // prislo me lepsi napad to udelat pres vyber souboru, preci jen to je lepsi..
-        System.out.println("Vyberte prosím složku:");
-        JFileChooser fileChooser = new JFileChooser(".");
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int result = fileChooser.showOpenDialog(new JFrame());
-        if (result != JFileChooser.APPROVE_OPTION) {
-            System.out.println("Nezvolena slozka");
+    public void start(File directory) {
+        if (directory == null) {
+            // prislo me lepsi napad to udelat pres vyber souboru, preci jen to je lepsi..
+            System.out.println("Vyberte prosím složku:");
+            JFileChooser fileChooser = new JFileChooser(".");
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            int result = fileChooser.showOpenDialog(new JFrame());
+            if (result != JFileChooser.APPROVE_OPTION) {
+                System.out.println("Nezvolena slozka");
+                return;
+            }
+            selectedFile = fileChooser.getSelectedFile();
+        } else {
+            selectedFile = directory;
+        }
+
+        if (!selectedFile.exists()) {
+            System.out.println("Tato slozka neexistuje. Zkuste ji napsat spravne.");
             return;
         }
 
         // kdyby nahodou tam je kontrola directory, prestoze mam directoriesonly.
-        File selectedFile = fileChooser.getSelectedFile();
         if (!selectedFile.isDirectory()) {
-            System.out.println("Zvolil jste soubor, ne slozku..");
+            System.out.println("Zvolil jste soubor, ne slozku.");
             return;
         }
         System.out.println("Slozka: " + selectedFile.getAbsolutePath());
@@ -35,6 +51,7 @@ public class AutoRadio {
         for (Music music : musics) {
             System.out.println(music.oldName + " -> " + music.getNewName());
         }
+        System.exit(0);
     }
 
     // metoda na vyber vsech files a dani je do listu
@@ -46,7 +63,8 @@ public class AutoRadio {
                 addAllFiles(sub);
             }
             // jinak else protoze i directory chteji prejmenovat
-            musics.add(new Music(sub.getAbsolutePath(), sub.getName()));
+            // vyuzil jsem replace z duvodu ze tam nechceme cely path - tak jsem to pochopil ze zadani
+            musics.add(new Music(sub.getAbsolutePath().replace(selectedFile.getAbsolutePath(), ""), sub.getName()));
         }
     }
 

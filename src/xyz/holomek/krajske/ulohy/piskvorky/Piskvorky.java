@@ -40,7 +40,7 @@ public class Piskvorky {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        // +24 u vysky protoze toolkit, u linuxu je jiny
+        // +25 u vysky protoze toolkit, u linuxu je jiny; +150 kvuli hracum
         frame.setBounds(screenSize.width / 2 - sizeX / 2, screenSize.height / 2 - sizeY / 2, sizeX + 150, sizeY + 25);
         frame.setResizable(false);
         frame.getContentPane().setLayout(null);
@@ -57,10 +57,12 @@ public class Piskvorky {
 
         // pro vsechny kolonky
         for (Field field : fields) {
+            // vypocitani x, y na zaklade poctu poli a velikosti hraciho pole
             int rowX = field.rowX, rowY = field.rowY;
             int x = rowX * sizePerFieldX, y = rowY * sizePerFieldY;
 
             JLabel fieldLabel = new JLabel();
+            // font size, musime upravovat podle velikosti pole
             int size = 64;
             if (fieldsPerSide > 7)
                 size = 32;
@@ -71,7 +73,7 @@ public class Piskvorky {
             fieldLabel.setFont(new Font("Serif", Font.BOLD, size)); // idealni font pro to me prislo
             fieldLabel.setBounds(x, y, sizePerFieldX, sizePerFieldY);
 
-            // misto zdlouhaveho vykreslovani poli, muzeme udelat toto
+            // misto zdlouhaveho vykreslovani poli, muzeme udelat toto, je to rychlejsi o par procent nez kdybych to mel vykreslovat
             fieldLabel.setForeground(Color.BLACK);
             fieldLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
@@ -106,15 +108,16 @@ public class Piskvorky {
         playerOne.setHorizontalAlignment(JLabel.CENTER);
         frame.getContentPane().add(playerOne);
 
-        JLabel playerOneWinnings = new JLabel("Wins: " + this.playerOne.winning);
-        playerOneWinnings.setBounds(sizeX + 1, 40, 149, 30);
-        playerOneWinnings.setHorizontalAlignment(JLabel.CENTER);
-        frame.getContentPane().add(playerOneWinnings);
-
         JLabel playerTwo = new JLabel(this.playerTwo.getName());
         playerTwo.setBounds(sizeX + 1, sizeY - 50, 149, 30);
         playerTwo.setHorizontalAlignment(JLabel.CENTER);
         frame.getContentPane().add(playerTwo);
+
+        //dodatek pro hrace, pocer vyher, nemusime nikde ukladat, po kazde inicializaci se to udela samo =)
+        JLabel playerOneWinnings = new JLabel("Wins: " + this.playerOne.winning);
+        playerOneWinnings.setBounds(sizeX + 1, 40, 149, 30);
+        playerOneWinnings.setHorizontalAlignment(JLabel.CENTER);
+        frame.getContentPane().add(playerOneWinnings);
 
         JLabel playerTwoWinnings = new JLabel("Wins: " + this.playerTwo.winning);
         playerTwoWinnings.setBounds(sizeX + 1, sizeY - 90, 149, 30);
@@ -192,16 +195,18 @@ public class Piskvorky {
 
     // metoda na vyhru, checkovani
     private Player checkWinner() {
+        // mapa na ukladani listu poli (pr X = [[x,y]], apod.)
         HashMap<Type, ArrayList<Field>> map = new HashMap<Type, ArrayList<Field>>();
 
         int vyherPoleMusiMit = 4;
+        // muzeme si zapinat a vypinat ruzne kontroly, vertikalni, horizontalni, do krize, apod..
         boolean horizontal = true, vertical = true, a = true, b = true;
 
         for (Type t : Type.values())
             if (t != Type.NONE)
                 map.put(t, new ArrayList<Field>());
 
-        //horizontal
+        //horizontalni kontrola
         if (horizontal) {
             for (int y = 0; y < fieldsPerSide; y++) {
                 for (int x = 0; x < fieldsPerSide; x++) {
@@ -229,7 +234,7 @@ public class Piskvorky {
         for (Type t : map.keySet())
             map.get(t).clear();
 
-        //vertikalni
+        //vertikalni kontrola
         if (vertical) {
             for (int x = 0; x < fieldsPerSide; x++) {
                 for (int y = 0; y < fieldsPerSide; y++) {
@@ -257,7 +262,7 @@ public class Piskvorky {
         for (Type t : map.keySet())
             map.get(t).clear();
 
-        //a
+        // a - proste na X (od jedne care k druhe care)
         if (a) {
             for (int y = 0; y < fieldsPerSide; y++) {
                 for (int x = 0; x < fieldsPerSide; x++) {
@@ -284,7 +289,7 @@ public class Piskvorky {
         for (Type t : map.keySet())
             map.get(t).clear();
 
-        //b
+        // b - proste na X (od jedne care k druhe care)
         if (b) {
             for (int y = 0; y < fieldsPerSide; y++) {
                 for (int x = 0; x < fieldsPerSide; x++) {
@@ -311,6 +316,7 @@ public class Piskvorky {
         return null;
     }
 
+    // metoda na ziskani policka podle souradnic
     public Field getField(int rowX, int rowY) {
         for (Field field : fields)
             if (field.rowY == rowY && field.rowX == rowX)
@@ -318,20 +324,24 @@ public class Piskvorky {
         return null;
     }
 
+    // metoda na ziskani hrace s danym typem, vyuzivame jen u checkWin
     public Player getPlayerWhich(Type type) {
         if (type == Type.NONE)
             return null;
         return playerOne.type == type ? playerOne : playerTwo;
     }
 
+    // metoda na ziskani hrace ktery prave hraje
     public Player getActualPlayingPlayer() {
         return actualPlaying == 0 ? playerOne : playerTwo;
     }
 
+    // metoda na ziskani hrace ktery hraje po nem
     public Player getNextPlayingPlayer() {
         return actualPlaying == 1 ? playerOne : playerTwo;
     }
 
+    // metoda, ktera nam nastavi dalsiho hrace
     public void nextPlayer() {
         actualPlaying = actualPlaying == 0 ? 1 : 0;
         Player actualPlayer = getActualPlayingPlayer(), nextPlayer = getNextPlayingPlayer();
