@@ -37,6 +37,7 @@ public class UtilValue implements Comparator<Object> {
     	}
     }
 
+    // metoda pro ziskani mapy s ciselnym razením od nejvyssiho po nejmensi
     public static HashMap<Integer, Object> convertToHighestLowest(HashMap<Object, Integer> defaultMap) {
     	HashMap<Object, Integer> map = new HashMap<Object, Integer>();
     	UtilValue bvc = new UtilValue(map, false);
@@ -51,7 +52,8 @@ public class UtilValue implements Comparator<Object> {
         }
 		return ids;
 	}
-    
+
+    // metoda pro ziskani mapy s ciselnym razením od nejmensiho pro nejvetsi
     public static HashMap<Integer, Object> convertToLowestHighest(HashMap<Object, Integer> defaultMap) {
     	HashMap<Object, Integer> map = new HashMap<Object, Integer>();
     	UtilValue bvc = new UtilValue(map, true);

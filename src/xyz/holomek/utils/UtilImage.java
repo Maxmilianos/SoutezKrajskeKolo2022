@@ -5,6 +5,7 @@ import java.awt.*;
 
 public class UtilImage {
 
+    // metoda pro zmenseni/zvetseni daneho obrazku do urcite vysky, sirky
     public static ImageIcon getScaledImage(ImageIcon icon, int width, int height) {
         int nw = icon.getIconWidth();
         int nh = icon.getIconHeight();

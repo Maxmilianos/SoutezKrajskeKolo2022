@@ -52,6 +52,7 @@ public class UtilMath {
         return true;
     }
 
+    // metoda pro decimalformat
     public static double trim(int degree, double d) {
         String format = "#.#";
         for (int i=1 ; i<degree ; i++)

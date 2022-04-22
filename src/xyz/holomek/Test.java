@@ -12,7 +12,8 @@ public class Test {
 
         /*
         Prvni uloha, splnena cela, funkcni
-         *//*
+         */
+        /*
         Bumbac bumbac = new Bumbac();
         bumbac.start();
 
@@ -20,23 +21,30 @@ public class Test {
         Druha uloha, splnena, az na tu oznameni o chybe, nevim jaka chyba by se mohla vyskytnut
         V pripade ze chceme zapinat pres parametr, musíme napsat
         autoRadio.start(new File(args[0]));
-         *//*
+         */
+        /*
         AutoRadio autoRadio = new AutoRadio();
         autoRadio.start(null);
-
+        */
         /*
         Treti uloha, splnena, funkcni, splnena cela myslim
-         *//*
+         */
+        /*
         PiskvorkySelect pexesoSelect = new PiskvorkySelect();
         pexesoSelect.initialize();
-        /*Piskvorky test = new Piskvorky(7, "First", "Second");
-        test.start();*/
+         */
+        /*
+        Piskvorky test = new Piskvorky(7, "First", "Second");
+        test.start();
+        */
 
         /*
         Ctvrta uloha, splnena cela
-         *//*
+         */
+        /*
         Scrabble scrabble = new Scrabble();
-        scrabble.start();*/
+        scrabble.start();
+        */
 
     }
 

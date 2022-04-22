@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 public class UtilFiles {
 
+    // metoda na kopirovani slozek
     public static void copyDir(File source, File target) throws IOException {
         if(source.isDirectory()) {
             if(!target.exists())
@@ -31,6 +32,7 @@ public class UtilFiles {
         }
     }
 
+    // metoda pro zapsani do souboru
     public static void appendToFile(File file, String text) throws IOException {
 
         if (!file.exists())
@@ -39,15 +41,18 @@ public class UtilFiles {
         Files.write(Paths.get(file.getAbsolutePath()), text.getBytes(), StandardOpenOption.APPEND);
     }
 
+    // metoda pro zapsani do souboru, odkazuje na metodu s File
     public static void appendToFile(String filePath, String text) throws IOException {
         appendToFile(new File(filePath), text);
     }
 
+    // metoda pro cteni z souboru radky, vraci je v listu, odkazuje na metodu se stringem
     public static ArrayList<String> readFromFile(File file) {
         return readFromFile(file.getAbsolutePath());
     }
 
 
+    // metoda pro cteni z souboru radky, vraci je v listu
     public static ArrayList<String> readFromFile(String filePath) {
         ArrayList<String> lines = new ArrayList<>();
         try {

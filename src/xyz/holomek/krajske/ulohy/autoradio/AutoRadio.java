@@ -56,8 +56,10 @@ public class AutoRadio {
 
     // metoda na vyber vsech files a dani je do listu
     public void addAllFiles(File directory) {
+        // kontrolni podminky
         if (directory == null) System.out.println("Nebyla zvolena slozka.");
         if (!directory.isDirectory()) System.out.println("Nebyla zvolena slozka. Nejspis jste zvolil soubor.");
+
         for (File sub : directory.listFiles()) {
             if (sub.isDirectory()) {
                 addAllFiles(sub);
@@ -81,14 +83,7 @@ public class AutoRadio {
 
         // metoda pro ziskani noveho jmena
         public String getNewName() {
-            String name = oldFileName;
-            // nevim zda tam chteji vsechno, ale nevadi
-            /*if (name.contains("\"")) {
-                String[] split = name.split("\"");
-                name = split[split.length - 1];
-                System.out.println("Name je : " + name);
-            }*/
-            return Normalizer.normalize(name, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+            return Normalizer.normalize(oldFileName, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
         }
     }
 
