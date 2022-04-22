@@ -16,7 +16,8 @@ public class Field {
     }
 
     public void setType(Type type) {
-
+        this.type = type;
+        label.setText(type.ch);
     }
 
 }

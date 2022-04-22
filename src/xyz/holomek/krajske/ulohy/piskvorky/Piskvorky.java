@@ -1,10 +1,13 @@
 package xyz.holomek.krajske.ulohy.piskvorky;
 
+import xyz.holomek.utils.UtilMath;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Piskvorky {
 
@@ -12,10 +15,13 @@ public class Piskvorky {
 
     private int sizeX, sizeY, fieldsPerSide = 7, actualPlaying = 0;
 
-    private Player playerOne, playerTwo;
+    private Player playerOne, playerTwo, winner;
+
+    private long startedTime = 0;
 
     private ArrayList<Field> fields = new ArrayList<Field>();
 
+    // pro upresneni vsech pozadavku
     public Piskvorky(int fieldsPerSide, String playerOne, String playerTwo) {
         this.sizeX = 600;
         this.sizeY = 600;
@@ -24,6 +30,7 @@ public class Piskvorky {
         this.playerTwo = new Player(playerTwo, Type.O);
     }
 
+    // uvodni startovaci metoda
     public void start() {
         frame = new JFrame();
         frame.setTitle("Piskvorky");
@@ -35,22 +42,26 @@ public class Piskvorky {
         frame.setResizable(false);
         frame.getContentPane().setLayout(null);
 
+        // zapiseme fields
         for (int x = 0; x < fieldsPerSide; x++) {
             for (int y = 0; y < fieldsPerSide; y++) {
                 fields.add(new Field(x, y));
             }
         }
 
+        // zjistime X, Y velikost pro kolonku
         int sizePerFieldX = sizeX / fieldsPerSide, sizePerFieldY = sizeY / fieldsPerSide;
 
+        // pro vsechny kolonky
         for (Field field : fields) {
             int rowX = field.rowX, rowY = field.rowY;
             int x = rowX * sizePerFieldX, y = rowY * sizePerFieldY;
 
             JLabel fieldLabel = new JLabel();
-            fieldLabel.setFont(new Font("Serif", Font.BOLD, 64));
+            fieldLabel.setFont(new Font("Serif", Font.BOLD, 64)); // idealni font pro to me prislo
             fieldLabel.setBounds(x, y, sizePerFieldX, sizePerFieldY);
 
+            // misto zdlouhaveho vykreslovani poli, muzeme udelat toto
             fieldLabel.setForeground(Color.BLACK);
             fieldLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 
@@ -93,10 +104,30 @@ public class Piskvorky {
         this.playerOne.label = playerOne;
         this.playerTwo.label = playerTwo;
 
+        // napadlo mna pridelat aj cas
+        JLabel timeCheck = new JLabel("Cas: 0 sekund");
+        timeCheck.setBounds(sizeX + 1, (sizeY - 30) / 2, 149, 30);
+        timeCheck.setHorizontalAlignment(JLabel.CENTER);
+        frame.getContentPane().add(timeCheck);
+
+        // cas zahajen, zahaji se hned jak se spusti a vykresli appka
+        startedTime = System.currentTimeMillis();
+        new Thread(() -> {
+            // jakmile se najde vitez, casovac se zastavi
+            while (winner == null) {
+                double time = UtilMath.trim(1, (double) (System.currentTimeMillis() - startedTime) / 1000);
+                timeCheck.setText("Cas: " + time + " sekund");
+            }
+        }).start();
+
         frame.setVisible(true);
     }
 
     public void onClick(Field field) {
+        if (winner != null) {
+            System.out.println("Jiz je nekdo vitez.");
+            return;
+        }
         if (field.type != Type.NONE) {
             System.out.println("Hrac nemuze klikat na obsazene pole.");
             return;
@@ -105,6 +136,142 @@ public class Piskvorky {
         Player playing = getActualPlayingPlayer();
         field.setType(playing.type);
         nextPlayer();
+        Player winner = checkWinner();
+        if (winner != null) {
+            System.out.println("Mame viteze hrace: " + winner.getName() + " typ: " + winner.type.ch);
+            this.winner = winner;
+
+            int result = JOptionPane.showConfirmDialog(frame,
+                    "Vyhral hrac: " + winner.getName() + ". Gratulujeme.\n" +
+                            "Chcete hrat dale znovu?");
+            if (result == 0) {
+                new Piskvorky(fieldsPerSide, playerTwo.getName(), playerOne.getName()).start();
+                frame.dispose();
+            } else {
+                System.exit(0);
+            }
+        }
+    }
+
+    // metoda na vyhru, checkovani
+    private Player checkWinner() {
+        HashMap<Type, ArrayList<Field>> map = new HashMap<Type, ArrayList<Field>>();
+
+        int vyherPoleMusiMit = 4;
+        boolean horizontal = true, vertical = true, a = true, b = true;
+
+        for (Type t : Type.values())
+            if (t != Type.NONE)
+                map.put(t, new ArrayList<Field>());
+
+        //horizontal
+        if (horizontal) {
+            for (int y = 1; y <= fieldsPerSide; y++) {
+                for (int x = 1; x <= fieldsPerSide; x++) {
+                    Field f = getField(x, y);
+                    if (f != null) {
+                        if (f.type == Type.NONE)
+                            for (Type t : map.keySet())
+                                map.get(t).clear();
+                        else {
+                            map.get(f.type).add(f);
+                            for (Type t : map.keySet())
+                                if (t != f.type)
+                                    map.get(t).clear();
+                            if (map.get(f.type).size() >= vyherPoleMusiMit) {
+                                return getPlayerWhich(f.type);
+                            }
+                        }
+                    }
+                }
+                for (Type t : map.keySet())
+                    map.get(t).clear();
+            }
+        }
+
+        for (Type t : map.keySet())
+            map.get(t).clear();
+
+        //vertikalni
+        if (vertical) {
+            for (int x = 1; x <= fieldsPerSide; x++) {
+                for (int y = 1; y <= fieldsPerSide; y++) {
+                    Field f = getField(x, y);
+                    if (f != null) {
+                        if (f.type == Type.NONE)
+                            for (Type t : map.keySet())
+                                map.get(t).clear();
+                        else {
+                            map.get(f.type).add(f);
+                            for (Type t : map.keySet())
+                                if (t != f.type)
+                                    map.get(t).clear();
+                            if (map.get(f.type).size() >= vyherPoleMusiMit) {
+                                return getPlayerWhich(f.type);
+                            }
+                        }
+                    }
+                }
+                for (Type t : map.keySet())
+                    map.get(t).clear();
+            }
+        }
+
+        for (Type t : map.keySet())
+            map.get(t).clear();
+
+        //a
+        if (a) {
+            for (int y = 1; y <= fieldsPerSide; y++) {
+                for (int x = 1; x <= fieldsPerSide; x++) {
+                    Field f = getField(x, y);
+                    if (f != null) {
+                        if (f.type != Type.NONE) {
+                            boolean check = true;
+                            for (int i = 1; i <= vyherPoleMusiMit-1; i++) {
+                                Field newField = getField(x + i, y + i);
+                                if (newField != null) {
+                                    if (newField.type != f.type) {
+                                        check = false;
+                                    } else if (i == vyherPoleMusiMit-1 && check) {
+                                        return getPlayerWhich(f.type);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (Type t : map.keySet())
+            map.get(t).clear();
+
+        //b
+        if (b) {
+            for (int y = 1; y <= fieldsPerSide; y++) {
+                for (int x = 1; x <= fieldsPerSide; x++) {
+                    Field f = getField(x, y);
+                    if (f != null) {
+                        if (f.type != Type.NONE) {
+                            boolean check = true;
+                            for (int i = 1; i <= vyherPoleMusiMit-1; i++) {
+                                Field newField = getField(x - i, y + i);
+                                if (newField != null) {
+                                    if (newField.type != f.type) {
+                                        check = false;
+                                    } else if (i == vyherPoleMusiMit-1 && check) {
+                                        return getPlayerWhich(f.type);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     public Field getField(int rowX, int rowY) {
@@ -112,6 +279,12 @@ public class Piskvorky {
             if (field.rowY == rowY && field.rowX == rowX)
                 return field;
         return null;
+    }
+
+    public Player getPlayerWhich(Type type) {
+        if (type == Type.NONE)
+            return null;
+        return playerOne.type == type ? playerOne : playerTwo;
     }
 
     public Player getActualPlayingPlayer() {

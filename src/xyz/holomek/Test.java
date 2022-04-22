@@ -21,12 +21,12 @@ public class Test {
         autoRadio.start();*/
 
         /*
-        Treti uloha
-         *//*
+        Treti uloha, splnena, mela by bt funkcni
+         */
         PiskvorkySelect pexesoSelect = new PiskvorkySelect();
-        pexesoSelect.initialize();*/
-        Piskvorky test = new Piskvorky(7, "First", "Second");
-        test.start();
+        pexesoSelect.initialize();
+        /*Piskvorky test = new Piskvorky(7, "First", "Second");
+        test.start();*/
 
     }
 
